@@ -12,7 +12,7 @@ type ProductSizeTableProps = {
 };
 
 /**
- * Selectable size table with W*D*H dimensions and unit price columns.
+ * Responsive size picker rendered as stacked selectable cards.
  */
 export function ProductSizeTable({
   sizes,
@@ -21,71 +21,54 @@ export function ProductSizeTable({
   name = "mattress-size",
 }: ProductSizeTableProps) {
   return (
-    <fieldset className="surface-panel overflow-hidden border-0 p-0">
+    <fieldset className="min-w-0 border-0 p-0">
       <legend className="sr-only">매트리스 사이즈 선택</legend>
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[320px] text-left text-sm">
-          <thead className="text-eyebrow">
-            <tr>
-              <th scope="col" className="px-4 py-4 font-normal whitespace-nowrap sm:px-6">
-                Size
-              </th>
-              <th scope="col" className="px-4 py-4 font-normal whitespace-nowrap sm:px-6">
-                가로*세로*높이
-              </th>
-              <th
-                scope="col"
-                className="px-4 py-4 text-right font-normal whitespace-nowrap sm:px-6"
-              >
-                Price
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {sizes.map((row) => {
-              const selected = row.size === selectedSize;
-              const inputId = `${name}-${row.size.replace(/\s+/g, "-").toLowerCase()}`;
 
-              return (
-                <tr
-                  key={row.size}
-                  className={cn(
-                    "border-t border-sand/60 transition-colors duration-300",
-                    selected ? "bg-cream" : "hover:bg-cream/50",
-                  )}
-                >
-                  <td className="px-4 py-4 sm:px-6">
-                    <label
-                      htmlFor={inputId}
-                      className="flex cursor-pointer items-center gap-2.5 font-light text-foreground sm:gap-3"
-                    >
-                      <input
-                        id={inputId}
-                        type="radio"
-                        name={name}
-                        value={row.size}
-                        checked={selected}
-                        onChange={() => onSelect(row.size)}
-                        className="size-4 shrink-0 accent-primary"
-                      />
-                      <span className="whitespace-nowrap">{row.size}</span>
-                    </label>
-                  </td>
-                  <td className="px-4 py-4 font-mono text-[13px] tracking-wide text-foreground/55 sm:px-6">
-                    <label htmlFor={inputId} className="cursor-pointer whitespace-nowrap">
-                      {row.dimension}
-                    </label>
-                  </td>
-                  <td className="px-4 py-4 text-right text-foreground sm:px-6">
-                    <label htmlFor={inputId} className="cursor-pointer whitespace-nowrap">
-                      {formatPrice(row.price)}
-                    </label>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div
+        className="flex flex-col gap-2.5"
+        role="radiogroup"
+        aria-label="사이즈"
+      >
+        {sizes.map((row) => {
+          const selected = row.size === selectedSize;
+          const inputId = `${name}-${row.size.replace(/\s+/g, "-").toLowerCase()}`;
+
+          return (
+            <label
+              key={row.size}
+              htmlFor={inputId}
+              className={cn(
+                "surface-panel flex min-w-0 cursor-pointer items-center gap-3 px-4 py-4 transition-colors sm:gap-4 sm:px-5",
+                selected && "ring-1 ring-primary/40",
+              )}
+            >
+              <input
+                id={inputId}
+                type="radio"
+                name={name}
+                value={row.size}
+                checked={selected}
+                onChange={() => onSelect(row.size)}
+                className="size-4 shrink-0 accent-primary"
+              />
+
+              <span className="grid min-w-0 flex-1 gap-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-4">
+                <span className="min-w-0">
+                  <span className="block text-[15px] font-light text-foreground">
+                    {row.size}
+                  </span>
+                  <span className="mt-1 block text-[12px] tracking-wide break-all text-foreground/50 sm:text-[13px]">
+                    <span className="text-foreground/35">가로*세로*높이 </span>
+                    {row.dimension}
+                  </span>
+                </span>
+                <span className="text-[14px] whitespace-nowrap text-foreground sm:text-right sm:text-[15px]">
+                  {formatPrice(row.price)}
+                </span>
+              </span>
+            </label>
+          );
+        })}
       </div>
     </fieldset>
   );
